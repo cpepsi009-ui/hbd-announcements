@@ -88,4 +88,105 @@
             
             // 2. Ищем в подпапках
             possiblePaths.forEach(path => {
-                possibleNames.forEach(name
+                possibleNames.forEach(name => {
+                    candidates.push(path + name);
+                    // Варианты с разными расширениями для подпапок
+                    const nameWithoutExt = name.substring(0, name.lastIndexOf('.'));
+                    if (nameWithoutExt) {
+                        extensions.forEach(ext => {
+                            if (!name.endsWith(ext)) {
+                                candidates.push(path + `${nameWithoutExt}.${ext}`);
+                            }
+                        });
+                    }
+                });
+            });
+            
+            // 3. Добавляем варианты с любыми .png/.jpg файлами
+            extensions.forEach(ext => {
+                candidates.push(`*.${ext}`); // специальный маркер для поиска
+            });
+            
+            // Убираем дубликаты
+            const uniqueCandidates = [...new Set(candidates)];
+            
+            // Пробуем загрузить каждую картинку
+            let found = false;
+            
+            for (const candidate of uniqueCandidates) {
+                if (candidate.includes('*')) {
+                    // Если это шаблон поиска, пропускаем
+                    continue;
+                }
+                
+                const imgUrl = candidate;
+                try {
+                    const response = await fetch(imgUrl, { method: 'HEAD' });
+                    if (response.ok) {
+                        // Картинка найдена!
+                        const img = document.createElement('img');
+                        img.src = imgUrl;
+                        img.alt = `Найдено изображение: ${imgUrl}`;
+                        img.onload = () => {
+                            container.innerHTML = '';
+                            container.appendChild(img);
+                            const info = document.createElement('p');
+                            info.style.color = 'green';
+                            info.innerHTML = `✅ Картинка загружена: <code>${imgUrl}</code>`;
+                            container.appendChild(info);
+                            found = true;
+                        };
+                        img.onerror = () => {
+                            // Продолжаем поиск
+                        };
+                        return;
+                    }
+                } catch(e) {
+                    // Ошибка, пробуем следующий вариант
+                }
+            }
+            
+            // Если ничего не нашли, показываем форму загрузки
+            if (!found) {
+                container.innerHTML = `
+                    <div class="error">
+                        <p>❌ Изображение не найдено автоматически</p>
+                        <p>Пожалуйста, выберите файл вручную:</p>
+                        <input type="file" id="imageUpload" accept="image/*">
+                        <button onclick="uploadImage()">Показать картинку</button>
+                        <p style="margin-top: 15px; font-size: 12px;">
+                            Подсказка: Положите файл с именем <strong>image.png</strong> или <strong>image.jpg</strong><br>
+                            в ту же папку, где находится этот HTML-файл
+                        </p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Функция для ручной загрузки картинки
+        function uploadImage() {
+            const input = document.getElementById('imageUpload');
+            const container = document.getElementById('image-container');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = 'Загруженное изображение';
+                    container.innerHTML = '';
+                    container.appendChild(img);
+                    const info = document.createElement('p');
+                    info.style.color = 'green';
+                    info.innerHTML = '✅ Изображение загружено вручную (только для текущего просмотра)';
+                    container.appendChild(info);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        // Запускаем поиск при загрузке страницы
+        findImage();
+    </script>
+</body>
+</html>
