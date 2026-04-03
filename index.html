@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Image</title>
+    <title>HBD Site</title>
     <style>
         * {
             margin: 0;
@@ -24,25 +24,24 @@
             background: black;
         }
         
-        .fullscreen-image {
+        .container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background: black;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: black;
         }
         
-        .fullscreen-image img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .container img {
+            max-width: 60%;
+            max-height: 60%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
             display: block;
         }
         
@@ -53,12 +52,11 @@
             font-size: 20px;
             padding: 20px;
             background: black;
-            z-index: 10;
         }
     </style>
 </head>
 <body>
-    <div class="fullscreen-image" id="imageContainer">
+    <div class="container" id="imageContainer">
         <div class="error-message">Searching for image.png...</div>
     </div>
 
