@@ -43,13 +43,11 @@
             width: auto;
             height: auto;
             object-fit: contain;
-            display: block;
-            opacity: 0;
-            transition: opacity 2s ease-out;
+            display: none;
         }
         
         .container video.visible {
-            opacity: 1;
+            display: block;
         }
         
         .play-btn {
@@ -87,9 +85,7 @@
         }
         
         .play-btn.hide {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
+            display: none;
         }
         
         body::before {
@@ -146,9 +142,6 @@
             
             video.addEventListener('canplaythrough', function() {
                 container.appendChild(video);
-                setTimeout(function() {
-                    video.classList.add('visible');
-                }, 50);
             });
         }
         
@@ -161,6 +154,7 @@
         }
         
         playBtn.addEventListener('click', function() {
+            video.classList.add('visible');
             video.play();
             playBtn.classList.add('hide');
         });
