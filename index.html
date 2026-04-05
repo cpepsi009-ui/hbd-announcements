@@ -34,7 +34,7 @@
             background: black;
             z-index: 100;
             pointer-events: none;
-            animation: fadeOutDarkness 3s ease-out forwards;
+            animation: fadeOutDarkness 2s ease-out forwards;
         }
         
         @keyframes fadeOutDarkness {
@@ -66,12 +66,6 @@
             height: auto;
             object-fit: contain;
             display: block;
-            opacity: 0;
-            transition: opacity 2s ease-out;
-        }
-        
-        .container video.loaded {
-            opacity: 1;
         }
         
         body::before {
@@ -85,7 +79,7 @@
             pointer-events: none;
             z-index: 0;
             opacity: 0;
-            animation: bgReveal 3s ease-out forwards;
+            animation: bgReveal 2s ease-out forwards;
         }
         
         @keyframes bgReveal {
@@ -96,30 +90,18 @@
                 opacity: 0.4;
             }
         }
-        
-        .loading {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255,255,255,0.5);
-            font-family: monospace;
-            font-size: 12px;
-            z-index: 200;
-        }
     </style>
 </head>
 <body>
     <div class="darkness-overlay"></div>
-    <div class="container" id="videoContainer">
-        <div class="loading">loading...</div>
-    </div>
+    <div class="container" id="videoContainer"></div>
 
     <script>
         const container = document.getElementById('videoContainer');
         const video = document.createElement('video');
+        video.autoplay = true;
         video.loop = true;
-        video.muted = true;
+        video.muted = false;
         video.volume = 1.0;
         video.playsInline = true;
         video.style.maxWidth = '60%';
@@ -129,39 +111,23 @@
         video.style.objectFit = 'contain';
         
         const paths = ['video.mp4', './video.mp4', 'videos/video.mp4', 'assets/video.mp4'];
-        let videoFound = false;
+        let videoStarted = false;
         
-        function loadVideo(url) {
-            videoFound = true;
+        function startVideo(url) {
+            if (videoStarted) return;
+            videoStarted = true;
             video.src = url;
-            
-            video.addEventListener('canplaythrough', function() {
-                container.innerHTML = '';
-                container.appendChild(video);
-                video.classList.add('loaded');
-                video.play();
-                
-                setTimeout(function() {
-                    video.muted = false;
-                }, 100);
-            });
-            
-            video.load();
+            container.appendChild(video);
+            video.play();
         }
         
         for (let i = 0; i < paths.length; i++) {
             fetch(paths[i], { method: 'HEAD' }).then(function(r) {
-                if (r.ok && !videoFound) {
-                    loadVideo(paths[i]);
+                if (r.ok && !videoStarted) {
+                    startVideo(paths[i]);
                 }
             }).catch(function() {});
         }
-        
-        setTimeout(function() {
-            if (!videoFound) {
-                container.innerHTML = '';
-            }
-        }, 3000);
         
         const iconPaths = ['icon.png', './icon.png', 'images/icon.png', 'img/icon.png', 'assets/icon.png'];
         const favicon = document.getElementById('favicon');
