@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>HBD | Upcomings</title>
+    <title>HBD | upcomings</title>
     <link rel="icon" type="image/png" href="icon.png" id="favicon">
     <style>
         * {
@@ -119,7 +119,7 @@
         const container = document.getElementById('videoContainer');
         const video = document.createElement('video');
         video.loop = true;
-        video.muted = false;
+        video.muted = true;
         video.volume = 1.0;
         video.playsInline = true;
         video.style.maxWidth = '60%';
@@ -139,18 +139,11 @@
                 container.innerHTML = '';
                 container.appendChild(video);
                 video.classList.add('loaded');
+                video.play();
                 
-                const playPromise = video.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(function() {
-                        video.volume = 1.0;
-                    }).catch(function() {
-                        document.body.addEventListener('click', function once() {
-                            video.play();
-                            document.body.removeEventListener('click', once);
-                        });
-                    });
-                }
+                setTimeout(function() {
+                    video.muted = false;
+                }, 100);
             });
             
             video.load();
@@ -170,12 +163,13 @@
             }
         }, 3000);
         
-        const icons = ['icon.png', './icon.png', 'images/icon.png', 'assets/icon.png'];
+        const iconPaths = ['icon.png', './icon.png', 'images/icon.png', 'img/icon.png', 'assets/icon.png'];
+        const favicon = document.getElementById('favicon');
         
-        for (let i = 0; i < icons.length; i++) {
-            fetch(icons[i], { method: 'HEAD' }).then(function(r) {
+        for (let i = 0; i < iconPaths.length; i++) {
+            fetch(iconPaths[i], { method: 'HEAD' }).then(function(r) {
                 if (r.ok) {
-                    document.getElementById('favicon').href = icons[i];
+                    favicon.href = iconPaths[i];
                 }
             }).catch(function() {});
         }
