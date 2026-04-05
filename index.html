@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>HBD | upcomings</title>
-    <link rel="icon" type="image/png" href="icon.png" id="favicon">
+    <link rel="icon" type="image/png" href="" id="favicon">
     <style>
         * {
             margin: 0;
@@ -159,12 +159,14 @@
             playBtn.classList.add('hide');
         });
         
-        const iconPaths = ['icon.png', './icon.png', 'images/icon.png', 'img/icon.png', 'assets/icon.png'];
+        const iconPaths = ['icon.png', './icon.png', 'images/icon.png', 'img/icon.png', 'assets/icon.png', 'favicon.png', './favicon.png'];
         const favicon = document.getElementById('favicon');
+        let iconSet = false;
         
         for (let i = 0; i < iconPaths.length; i++) {
             fetch(iconPaths[i], { method: 'HEAD' }).then(function(r) {
-                if (r.ok) {
+                if (r.ok && !iconSet) {
+                    iconSet = true;
                     favicon.href = iconPaths[i];
                 }
             }).catch(function() {});
